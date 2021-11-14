@@ -1,5 +1,5 @@
 {
-  "homepage": "http://s-siddiqui.github.io/friends-list-app",
+  "homepage": "http://shindeshubham582/my-app",
   "name": "friends-list-app",
   "version": "0.1.0",
   "private": true,
@@ -44,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "-": "0.0.1",
     "gh-pages": "^3.2.3"
   }
 }
