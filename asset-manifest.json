@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/add_friend_project/static/css/main.8e589e18.chunk.css",
-    "main.js": "/add_friend_project/static/js/main.2e3c085d.chunk.js",
-    "main.js.map": "/add_friend_project/static/js/main.2e3c085d.chunk.js.map",
-    "runtime-main.js": "/add_friend_project/static/js/runtime-main.f93a420f.js",
-    "runtime-main.js.map": "/add_friend_project/static/js/runtime-main.f93a420f.js.map",
+    "main.js": "/add_friend_project/static/js/main.30f9355c.chunk.js",
+    "main.js.map": "/add_friend_project/static/js/main.30f9355c.chunk.js.map",
+    "runtime-main.js": "/add_friend_project/static/js/runtime-main.4adf1f19.js",
+    "runtime-main.js.map": "/add_friend_project/static/js/runtime-main.4adf1f19.js.map",
     "static/css/2.7d1254a1.chunk.css": "/add_friend_project/static/css/2.7d1254a1.chunk.css",
-    "static/js/2.84989c97.chunk.js": "/add_friend_project/static/js/2.84989c97.chunk.js",
-    "static/js/2.84989c97.chunk.js.map": "/add_friend_project/static/js/2.84989c97.chunk.js.map",
-    "static/js/3.32d830d5.chunk.js": "/add_friend_project/static/js/3.32d830d5.chunk.js",
-    "static/js/3.32d830d5.chunk.js.map": "/add_friend_project/static/js/3.32d830d5.chunk.js.map",
+    "static/js/2.6cb16d65.chunk.js": "/add_friend_project/static/js/2.6cb16d65.chunk.js",
+    "static/js/2.6cb16d65.chunk.js.map": "/add_friend_project/static/js/2.6cb16d65.chunk.js.map",
+    "static/js/3.7e337014.chunk.js": "/add_friend_project/static/js/3.7e337014.chunk.js",
+    "static/js/3.7e337014.chunk.js.map": "/add_friend_project/static/js/3.7e337014.chunk.js.map",
     "index.html": "/add_friend_project/index.html",
     "static/css/2.7d1254a1.chunk.css.map": "/add_friend_project/static/css/2.7d1254a1.chunk.css.map",
     "static/css/main.8e589e18.chunk.css.map": "/add_friend_project/static/css/main.8e589e18.chunk.css.map",
-    "static/js/2.84989c97.chunk.js.LICENSE.txt": "/add_friend_project/static/js/2.84989c97.chunk.js.LICENSE.txt",
+    "static/js/2.6cb16d65.chunk.js.LICENSE.txt": "/add_friend_project/static/js/2.6cb16d65.chunk.js.LICENSE.txt",
     "static/media/font-awesome.min.css": "/add_friend_project/static/media/fontawesome-webfont.f691f37e.woff"
   },
   "entrypoints": [
-    "static/js/runtime-main.f93a420f.js",
+    "static/js/runtime-main.4adf1f19.js",
     "static/css/2.7d1254a1.chunk.css",
-    "static/js/2.84989c97.chunk.js",
+    "static/js/2.6cb16d65.chunk.js",
     "static/css/main.8e589e18.chunk.css",
-    "static/js/main.2e3c085d.chunk.js"
+    "static/js/main.30f9355c.chunk.js"
   ]
 }
