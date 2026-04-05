@@ -1,141 +1,193 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import '../App.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import Pagination from './pagination';
 
+/**
+ * FriendList Component - Manages a list of friends with add, delete, and favorite functionality
+ * Features:
+ * - Add new friends by typing and pressing Enter
+ * - Mark friends as favorites (close friends)
+ * - Delete individual friends from the list
+ * - Search/filter friends by name
+ * - Paginate through friends (4 per page)
+ * - Clear all friends at once
+ */
 const FriendList = () => {
-
-    let indexOfLastFriend, indexOfFirstFriend, currentItem;
-    const [state, setState] = useState({
-        inputData: '',
-        items: [],
-        currentPage: 1    
-    });
-    const [currentItems, setCurrentItems] = useState([]);
+    const [inputData, setInputData] = useState('');
+    const [items, setItems] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 4;
 
+    // Event: Clear all friends from the list
     const clearAllList = () => {
-        setState({
-            inputData: '',
-            items: [],
-            currentPage: 1    
-        })
+        setInputData('');
+        setItems([]);
+        setCurrentPage(1);
     }
 
-    useEffect(() => {
-        currentItem = getUpdatedItems(state.items);
-        setCurrentItems(currentItem);
-    }, [state, state.items, state.currentPage]);
-
-    // To Update the CurrentItems array
-    const getUpdatedItems = (items) => {
-        // Logic for Updating Friends Lists
-        indexOfLastFriend = state.currentPage * itemsPerPage;
-        indexOfFirstFriend = indexOfLastFriend - itemsPerPage;
-        let currentItem = items.slice(indexOfFirstFriend, indexOfLastFriend);
-        return currentItem;
-    }
-
-    // Input & Search Component
-    const RenderInputComp = <input type="text" value={state.inputData}
-                            onChange={(e) => setState({...state, inputData: e.target.value, currentPage: state.currentPage})}
-                            placeholder="Enter your friend's name"
-                            onKeyPress={(e) => addItem(e)}
-                            maxLength="50" />;
-
-    // Friends List Component
-    const RenderItemComp = state.items.filter((item, index) => {
-                            if (state.inputData === "") {
-                                return ((index >= (state.currentPage * itemsPerPage) - itemsPerPage && index < state.currentPage * itemsPerPage));
-                            } else if (item.friendName.toLowerCase().includes(state.inputData.toLowerCase())) {
-                                return item;
-                            }
-                            }).map((elem, index) => {
-                                return (
-                                    <div className="eachItem" key={index}>
-                                        <h3>{elem.friendName}</h3>
-                                        <div className="todo-btn">
-                                            <FontAwesomeIcon icon={faStar} id={'star' + index} className= {'fa-star' + ' ' + (elem.fav === 0 ? 'star-empty' : 'star-filled')} onClick={() => addRemoveFavourite(index, elem.id)} />
-                                            <FontAwesomeIcon icon={faTrashAlt} className="fa-trash-alt" onClick={() => deleteItem(index, elem.id)} />
-                                        </div>
-                                        <div className="friend-text"><br />{elem.fav === 0 ? 'is your friend' : 'is your close friend'}</div>
-                                    </div>
-                                )
-                            })
-
-    // Add a friend to list
+    // Event: Add a new friend to the list
     const addItem = (e) => {
-        if (e.charCode === 13 && state.inputData !== "") {
-            const values = { "id": state.items.length, "friendName": state.inputData, "fav": 0 };
-            setState({...state, items: [...state.items, values], inputData: ''});            
+        if (e.charCode === 13 && inputData.trim() !== "") {
+            const newFriend = { 
+                id: items.length, 
+                friendName: inputData.trim(), 
+                fav: 0 
+            };
+            setItems([...items, newFriend]);
+            setInputData('');
         }
     }
 
-    // Delete a Friend from list
-    const deleteItem = (key, elemId) => {
-        const updatedItems = state.items.filter((elem, index) => {
-            return elem.id !== elemId;
-        });
-        let currentItem = getUpdatedItems(updatedItems);
-        setState({...state, items: updatedItems});
-        if(currentItem.length === 0 && state.currentPage !== 1) {
-            const currentPage = state.currentPage - 1;
-            setState({...state, items: updatedItems, currentPage: currentPage});
+    // Event: Delete a friend from the list
+    const deleteItem = (elemId) => {
+        const updatedItems = items.filter((elem) => elem.id !== elemId);
+        setItems(updatedItems);
+        
+        // Adjust current page if needed
+        const indexOfLastFriend = currentPage * itemsPerPage;
+        const indexOfFirstFriend = indexOfLastFriend - itemsPerPage;
+        const currentPageItems = updatedItems.slice(indexOfFirstFriend, indexOfLastFriend);
+        
+        if (currentPageItems.length === 0 && currentPage !== 1) {
+            setCurrentPage(currentPage - 1);
         }
     }
 
-    // Set current Page from Pagination Component
-    const setCurrentPages = (pageNo) => {
-        setState({...state, currentPage: pageNo});
-    }
-
-    // Add a Friend to Favourite
-    const addRemoveFavourite = (key, elemId) => {
-        let itemArr = state.items.slice();
-        for (let i = 0; i < itemArr.length; i++) {
-            let item = itemArr[i];
+    // Event: Toggle friend as favorite
+    const addRemoveFavourite = (elemId) => {
+        const updatedItems = items.map((item) => {
             if (item.id === elemId) {
-                if (item.fav === 0) {
-                    item.fav = 1;
-                    itemArr.splice(i, 1);
-                    itemArr.unshift(item);
-                    break;
-                } else {
-                    item.fav = 0;
-                    let spliced = itemArr.splice(i, 1);
-                    itemArr.push(spliced[0]);
-                    break;
-                }
+                return { ...item, fav: item.fav === 0 ? 1 : 0 };
             }
-        }
-        setState({...state, items: itemArr});
+            return item;
+        });
+        
+        // Sort so favorites appear at the top
+        const sortedItems = [
+            ...updatedItems.filter(item => item.fav === 1),
+            ...updatedItems.filter(item => item.fav === 0)
+        ].map((item, index) => ({ ...item, id: index }));
+        
+        setItems(sortedItems);
     }
 
-    return (
-        <>
-            <div className="main-div">
-                <div className="child-div">
-                    <div className="header-div">
-                        <h3>Friends List</h3>
-                    </div>
-                    <div className="addItems">
-                        {RenderInputComp}
-                    </div>
-                    <div className="showItems">
-                        {RenderItemComp}
-                    </div>
-                    <Pagination items={state.items} currentPage={state.currentPage} parentCallback={setCurrentPages} />
-                    {
-                          state.items.length > 0 && <div className = 'clearAll'><button className = 'clearAll' onClick = {clearAllList}>Clear All</button> </div>
-                    }
+    // Event: Update current page for pagination
+    const setCurrentPages = (pageNo) => {
+        setCurrentPage(pageNo);
+    }
+
+    // Render: Get items for current page based on filters
+    const getFilteredAndPaginatedItems = () => {
+        const filtered = items.filter((item) => {
+            return item.friendName.toLowerCase().includes(inputData.toLowerCase());
+        });
+
+        const indexOfLastFriend = currentPage * itemsPerPage;
+        const indexOfFirstFriend = indexOfLastFriend - itemsPerPage;
+        return filtered.slice(indexOfFirstFriend, indexOfLastFriend);
+    }
+
+    const currentItems = getFilteredAndPaginatedItems();
+
+    // Render: Input component for adding friends
+    const RenderInputComp = (
+        <input 
+            type="text" 
+            value={inputData}
+            onChange={(e) => setInputData(e.target.value)}
+            placeholder="Enter your friend's name"
+            onKeyPress={(e) => addItem(e)}
+            maxLength="50" 
+        />
+    );
+
+    // Render: Friends list items
+    const RenderItemComp = currentItems.map((elem) => {
+        return (
+            <div className="eachItem" key={elem.id}>
+                <div className="friend-info">
+                    <h3>{elem.friendName}</h3>
+                    <span className="friend-status">
+                        {elem.fav === 0 ? '👥 Friend' : '⭐ Close Friend'}
+                    </span>
                 </div>
-                <div>
+                <div className="todo-btn">
+                    <button 
+                        className="btn-favorite" 
+                        title={elem.fav === 0 ? 'Add to favorites' : 'Remove from favorites'}
+                        onClick={() => addRemoveFavourite(elem.id)}
+                    >
+                        <FontAwesomeIcon 
+                            icon={faStar} 
+                            className={elem.fav === 0 ? 'star-empty' : 'star-filled'} 
+                        />
+                    </button>
+                    <button 
+                        className="btn-delete" 
+                        title="Delete friend"
+                        onClick={() => deleteItem(elem.id)}
+                    >
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
                 </div>
             </div>
-        </>
+        )
+    })
+
+
+
+    const favCount = items.filter(item => item.fav === 1).length;
+    const totalCount = items.length;
+
+    return (
+        <div className="friend-list-container">
+            <div className="friend-list-wrapper">
+                {/* Header */}
+                <div className="header-div">
+                    <h1>Friends List</h1>
+                    <p className="subtitle">Manage and organize your friends</p>
+                    {totalCount > 0 && (
+                        <div className="stats">
+                            <span>{totalCount} total • {favCount} close friend{favCount !== 1 ? 's' : ''}</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Input Section */}
+                <div className="addItems">
+                    {RenderInputComp}
+                </div>
+
+                {/* Items Section */}
+                <div className="showItems">
+                    {currentItems.length > 0 ? (
+                        <>
+                            {RenderItemComp}
+                        </>
+                    ) : (
+                        <div className="no-friends">
+                            <p>{items.length === 0 ? '👋 No friends added yet. Add your first friend!' : '🔍 No friends match your search.'}</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Pagination */}
+                {items.length > 0 && <Pagination items={items} currentPage={currentPage} parentCallback={setCurrentPages} />}
+
+                {/* Clear All Button */}
+                {items.length > 0 && (
+                    <div className="clearAll">
+                        <button className="btn-clear-all" onClick={clearAllList}>
+                            Clear All Friends
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 
